@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block head_title %}
+amazing Title!
+{% endblock head_title %}
+
+{% block content %}
+Welcome to tweetme!
+
+<div id='tweets'> 
+  Replace me 
+</div>
+
+<script>
+  const tweetsElement = document.getElementById("tweets")
+  tweetsElement.innerHTML = "Loading..."
+
+  let el1 = "<h1>Hey One</h1>"
+  let el2 = "<h1>Hey Two</h1>"
+  let el3 = "<h1>Hey Three</h1>"
+  tweetsElement.innerHTML = el1 + el2 + el3
+
+  const xhr = new XMLHttpRequest()
+  const method = "GET"
+  const url = "/tweets"
+  const responseType = "json"
+
+  xhr.responseType = responseType
+  xhr.open(method, url)
+  xhr.onload = function() {
+    const serverResponse = xhr.response
+    let listedItems = serverResponse.response
+    console.log(listedItems)
+  }
+  xhr.send()
+
+</script>
+{% endblock content %}
