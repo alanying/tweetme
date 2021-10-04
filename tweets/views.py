@@ -10,6 +10,14 @@ from .forms import TweetForm
 def home_view(request, *args, **kwargs):
   return render(request, "pages/home.html", context={}, status=200)
 
+def tweet_create_view(request, *args, **kewargs):
+  form = TweetForm(request.POST or None)
+  if form.is_valid():
+    obj = form.save(commit=False)
+    obj.save()
+    form = TweetForm
+  return render(request, "components/form.html",context={"form": form})
+
 def tweet_list_view(request, *args, **kwargs):
   qs = Tweet.objects.all()
   tweet_list = [{"id": x.id, "content": x.content, "likes": random.randint(0, 123)} for x in qs]
