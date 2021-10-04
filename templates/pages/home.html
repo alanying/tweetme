@@ -5,32 +5,61 @@ amazing Title!
 {% endblock head_title %}
 
 {% block content %}
-Welcome to tweetme!
 
-<div id='tweets'> 
-  Replace me 
+<div class='row text-center'>
+  <div class='col'>
+    <h1>Welcome to TweetMe</h1>
+  </div>
+</div>
+
+<div class='row' id='tweets'> 
+  Loading...
 </div>
 
 <script>
   const tweetsElement = document.getElementById("tweets")
-  tweetsElement.innerHTML = "Loading..."
-
-  let el1 = "<h1>Hey One</h1>"
-  let el2 = "<h1>Hey Two</h1>"
-  let el3 = "<h1>Hey Three</h1>"
-  tweetsElement.innerHTML = el1 + el2 + el3
+  // tweetsElement.innerHTML = "Loading..."
+  // let el1 = "<h1>Hey One</h1>"
+  // let el2 = "<h1>Hey Two</h1>"
+  // let el3 = "<h1>Hey Three</h1>"
+  // tweetsElement.innerHTML = el1 + el2 + el3
 
   const xhr = new XMLHttpRequest()
   const method = "GET"
   const url = "/tweets"
   const responseType = "json"
+  
+  function handleDidLike(tweet_id, currentCount) {
+    console.log(tweet_id, currentCount)
+  }
+
+  function likeBtn(tweet) {
+    // return "<button class='btn btn-primary' onclick=handleDidLike(" + tweet.id + "," + tweet.likes + ")>Like</button>"
+    return `<button class='btn btn-primary btn-sm' onclick=handleDidLike(${tweet.id},${tweet.likes})> ${tweet.likes} Likes</button>`
+  }
+
+  function formatTweet(tweet) {
+    let formattedTweet = "<div class='col-12 col-md-10 mx-auto border rounded py-3 mb-4 tweet' id='tweet-" + tweet.id + 
+    "'><p>" + tweet.content + 
+      "</p><div class='btn-group'>" + likeBtn(tweet) +
+      "</div></div>"
+    return formattedTweet
+  }
 
   xhr.responseType = responseType
   xhr.open(method, url)
   xhr.onload = function() {
     const serverResponse = xhr.response
-    let listedItems = serverResponse.response
-    console.log(listedItems)
+    const listedItems = serverResponse.response
+    let finalTweetStr = ""
+    let i;
+    for (i=0; i<listedItems.length; i++) {
+      let tweetObj = listedItems[i]
+      let currentItem = formatTweet(tweetObj)
+      finalTweetStr += currentItem
+    }
+    tweetsElement.innerHTML = finalTweetStr
+    // console.log(listedItems)
   }
   xhr.send()
 
