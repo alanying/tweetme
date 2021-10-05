@@ -16,6 +16,7 @@ amazing Title!
 <div class='row mb-3'>
   <div class='col-md-4 col-10 mx-auto'>
     <form class='form' method='POST', action='/create-tweet', id='tweet-create-form'> {% csrf_token %}
+      <div class='d-none alert alert-danger' id='tweet-create-form-error'></div>
       <input type='hidden' value='/' name='next' />
       <textarea required='required' class='form-control' name='content' placeholder="What's up?"></textarea>
       <button type='submit' class='btn btn-primary'>Tweet</button>
@@ -28,6 +29,16 @@ amazing Title!
 </div>
 
 <script>
+
+  function handleTweetFormError(msg, display) {
+    let myErrorDiv = document.getElementById('tweet-create-form-error')
+    if (display === true) {
+      myErrorDiv.setAttribute("class", "d-block alert alert-danger")
+      myErrorDiv.innerText = msg
+    } else {
+      myErrorDiv.setAttribute("class", "d-none alert alert-danger")
+    }
+  }
 
   function handleTweetCreateFormDidSubmit(event) {
     event.preventDefault()
@@ -43,6 +54,7 @@ amazing Title!
     xhr.setRequestHeader("X-REQUESTED-WITH", "XMLHttpRequest")
     xhr.onload = function() {
       if (xhr.status === 201) {
+        handleTweetFormError("", false)
         const newTweet = xhr.response
         const newTweetElement = formatTweet(newTweet)
         const ogHtml = tweetsContainerElement.innerHTML
@@ -51,6 +63,19 @@ amazing Title!
       } else if (xhr.status === 400) {
         const errorJson = xhr.response
         console.log(errorJson)
+        const contentError = errorJson.content
+        let contentErrorMsg;
+        if (contentError) {
+          contentErrorMsg = contentError[0]
+          if (contentErrorMsg) {
+            handleTweetFormError(contentErrorMsg, true)
+          } else {
+            alert("Another error. Please try again later.")
+          }
+        } else {
+          alert("Another error. Please try again later.")
+        }
+        console.log(contentErrorMsg)
       } else if (xhr.status ===500) {
         alert("Server error. Please try again later.")
       }
