@@ -76,6 +76,9 @@ amazing Title!
           alert("Another error. Please try again later.")
         }
         console.log(contentErrorMsg)
+      } else if (xhr.status ===401) {
+        alert("Please login.")
+        window.location.href= "/login"
       } else if (xhr.status ===500) {
         alert("Server error. Please try again later.")
       }
