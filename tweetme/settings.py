@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-az#_c%-f-q5ns=v4qxy!ybl@2moert)o5%11xw*x@(e9ngkdm8
 DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1", ".tweetme.com"]
-
+LOGIN_URL = "/login"
 
 # Application definition
 
