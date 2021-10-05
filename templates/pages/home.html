@@ -48,7 +48,15 @@ amazing Title!
         const ogHtml = tweetsContainerElement.innerHTML
         tweetsContainerElement.innerHTML = newTweetElement + ogHtml
         myForm.reset()
+      } else if (xhr.status === 400) {
+        const errorJson = xhr.response
+        console.log(errorJson)
+      } else if (xhr.status ===500) {
+        alert("Server error. Please try again later.")
       }
+    }
+    xhr.onerror = function() {
+      alert('Error. Try again.')
     }
     xhr.send(myFormData)
   }
@@ -79,6 +87,7 @@ amazing Title!
       tweetsElement.innerHTML = finalTweetStr
       // console.log(listedItems)
     }
+    
     xhr.send()
   }
 
