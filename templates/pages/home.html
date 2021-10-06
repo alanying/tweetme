@@ -104,7 +104,7 @@ amazing Title!
     xhr.open(method, url)
     xhr.onload = function() {
       const serverResponse = xhr.response
-      const listedItems = serverResponse.response
+      const listedItems = serverResponse
       let finalTweetStr = ""
       let i;
       for (i=0; i<listedItems.length; i++) {

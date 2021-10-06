@@ -1,10 +1,13 @@
+import random
+
 from django.http.response import Http404
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-import random
 from django.utils.http import is_safe_url
 from django.conf import settings
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .models import Tweet
 from .forms import TweetForm
 from .serializers import TweetSerializer
@@ -16,13 +19,30 @@ def home_view(request, *args, **kwargs):
   print(request.user or None)
   return render(request, "pages/home.html", context={}, status=200)
 
+@api_view(['POST'])
 def tweet_create_view(request, *args, **kwargs):
-  serializer = TweetSerializer(data=request.POST or None)
-  if serializer.is_valid():
+  serializer = TweetSerializer(data=request.POST)
+  if serializer.is_valid(raise_exception=True):
     serializer.save(user=request.user)
-    return JsonResponse(serializer.data, status=201)
-  return JsonResponse({}, status=400)
+    return Response(serializer.data, status=201)
+  return Response({}, status=400)
 
+@api_view(['GET'])
+def tweet_detail_view(request, tweet_id, *args, **kwargs):
+  qs = Tweet.objects.filter(id=tweet_id)
+  if not qs.exists():
+    return Response({}, status=404)
+  obj = qs.first()
+  serializer = TweetSerializer(obj)
+  return Response(serializer.data, status=200)
+  
+@api_view(['GET'])
+def tweet_list_view(request, *args, **kwargs):
+  qs = Tweet.objects.all()
+  serializer = TweetSerializer(qs, many=True)
+  return Response(serializer.data, status=200)
+  
+  
 def tweet_create_view_pure_django(request, *args, **kewargs):
   user = request.user
   if not request.user.is_authenticated:
@@ -46,7 +66,7 @@ def tweet_create_view_pure_django(request, *args, **kewargs):
       return JsonResponse(form.errors, status=400)
   return render(request, "components/form.html",context={"form": form})
 
-def tweet_list_view(request, *args, **kwargs):
+def tweet_list_view_pure_django(request, *args, **kwargs):
   qs = Tweet.objects.all()
   # tweet_list = [{"id": x.id, "content": x.content, "likes": random.randint(0, 123)} for x in qs]
   tweet_list = [x.serialise() for x in qs]
@@ -56,7 +76,7 @@ def tweet_list_view(request, *args, **kwargs):
   }
   return JsonResponse(data)
 
-def tweet_detail_view(request, tweet_id, *args, **kwargs):
+def tweet_detail_view_pure_django(request, tweet_id, *args, **kwargs):
   data = {
     "id": tweet_id,
   }
