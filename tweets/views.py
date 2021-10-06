@@ -7,6 +7,7 @@ from django.conf import settings
 
 from .models import Tweet
 from .forms import TweetForm
+from .serializers import TweetSerializer
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
@@ -15,7 +16,14 @@ def home_view(request, *args, **kwargs):
   print(request.user or None)
   return render(request, "pages/home.html", context={}, status=200)
 
-def tweet_create_view(request, *args, **kewargs):
+def tweet_create_view(request, *args, **kwargs):
+  serializer = TweetSerializer(data=request.POST or None)
+  if serializer.is_valid():
+    serializer.save(user=request.user)
+    return JsonResponse(serializer.data, status=201)
+  return JsonResponse({}, status=400)
+
+def tweet_create_view_pure_django(request, *args, **kewargs):
   user = request.user
   if not request.user.is_authenticated:
     user = None
