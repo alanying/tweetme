@@ -6,7 +6,9 @@ from django.http import HttpResponse, JsonResponse
 from django.utils.http import is_safe_url
 from django.conf import settings
 
-from rest_framework.decorators import api_view
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Tweet
 from .forms import TweetForm
@@ -20,6 +22,8 @@ def home_view(request, *args, **kwargs):
   return render(request, "pages/home.html", context={}, status=200)
 
 @api_view(['POST'])
+# @authentication_classes([SessionAuthentication])    # don't need it if it's already been defined in settings
+@permission_classes([IsAuthenticated])
 def tweet_create_view(request, *args, **kwargs):
   serializer = TweetSerializer(data=request.POST)
   if serializer.is_valid(raise_exception=True):
