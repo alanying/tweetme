@@ -134,11 +134,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # customise how the IsAuthenticated decortor works
 # https://www.django-rest-framework.org/api-guide/authentication/#api-reference
 #https://www.django-rest-framework.org/api-guide/settings/
+DEFAULT_RENDER_CLASSES = ['rest_framework.renderers.JSONRenderer',]
+if DEBUG:
+  DEFAULT_RENDER_CLASSES += ['rest_framework.renderers.BrowsableAPIRenderer',]
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
     ],
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-    ]
+    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDER_CLASSES
 }
