@@ -8,6 +8,7 @@ TWEET_ACTIONS = settings.TWEET_ACTIONS
 class TweetActionSerializer(serializers.Serializer):
   id = serializers.IntegerField()
   action =  serializers.CharField()
+  content = serializers.Charfield(allow_blank=True, required=False)
   
   def validation_action(self, value):
     value = value.lower().strip()
