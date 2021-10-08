@@ -77,7 +77,7 @@ def tweet_action_view(request, *args, **kwargs):
         user = request.user,
         parent = obj,
         content = content)
-      serializer = TweetSerializer(obj)
+      serializer = TweetSerializer(new_tweet)
       return Response(serializer.data, status=200)
   return Response({}, status=200)
 
